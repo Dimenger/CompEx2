@@ -3,9 +3,8 @@ import styles from "./app.module.css";
 import data from "./data.json";
 
 export const App = () => {
-  // Можно задать 2 состояния — steps и activeIndex
-  const [steps, setSteps] = useState(data);
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [steps] = useState(data); // получаем данные  из ./data.json для формирования списка шагов
+  const [activeIndex, setActiveIndex] = useState(null); // устанавливаем активное состояния для выбраного шага
 
   // И определить 3 обработчика: Клик назад, Клик вперед, Начать сначала
 
@@ -17,8 +16,7 @@ export const App = () => {
         <h1>Инструкция по готовке пельменей</h1>
         <div className={styles.steps}>
           <div className={styles["steps-content"]}>
-            {/* Для получения активного контента использйте steps и activeIndex */}
-            Контент соответственный шагу. Сейчас активен шаг 3
+            {steps[Number(activeIndex) - 1].content}
           </div>
           <ul className={styles["steps-list"]}>
             {steps.map((step) => (
