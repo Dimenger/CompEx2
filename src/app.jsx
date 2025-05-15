@@ -3,13 +3,29 @@ import styles from "./app.module.css";
 import data from "./data.json";
 
 export const App = () => {
-  // Можно задать 2 состояния — steps и activeIndex
-  const [steps, setSteps] = useState(data);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [steps] = useState(data); // получаем данные  из ./data.json для формирования списка шагов
+  const [activeIndex, setActiveIndex] = useState("001"); // устанавливаем активное состояния для выбраного шага
 
   // И определить 3 обработчика: Клик назад, Клик вперед, Начать сначала
+  const forward = () => {
+    if (!isLastStep) {
+      let nextIndex = Number(activeIndex) + 1;
+      setActiveIndex(nextIndex.toString().padStart(3, "0"));
+    }
+  };
+  const back = () => {
+    if (!isFirstStep) {
+      let previousIndex = Number(activeIndex) - 1;
+      setActiveIndex(previousIndex.toString().padStart(3, "0"));
+    }
+  };
+  const startOver = () => {
+    setActiveIndex("001");
+  };
 
   // И 2 переменных-флага — находимся ли мы на первом шаге, и находимся ли на последнем
+  const isFirstStep = activeIndex === steps[0].id;
+  const isLastStep = activeIndex === steps.at(-1).id;
 
   return (
     <div className={styles.container}>
@@ -17,41 +33,39 @@ export const App = () => {
         <h1>Инструкция по готовке пельменей</h1>
         <div className={styles.steps}>
           <div className={styles["steps-content"]}>
-            {/* Для получения активного контента использйте steps и activeIndex */}
-            Контент соответственный шагу. Сейчас активен шаг 3
+            {steps[Number(activeIndex) - 1].content}
           </div>
           <ul className={styles["steps-list"]}>
-            {/* Выводите <li> с помощью массива steps и метода map(), подставляя в разметку нужные значения и классы */}
-            <li className={styles["steps-item"] + " " + styles.done}>
-              {/* Для того, чтобы вычислить необходимый класс используйте активный индекс, текущий индекс, а также тернарные операторы */}
-              <button className={styles["steps-item-button"]}>1</button>
-              {/* При клике на кнопку установка выбранного шага в качестве активного */}
-              Шаг 1
-            </li>
-            <li className={styles["steps-item"] + " " + styles.done}>
-              <button className={styles["steps-item-button"]}>2</button>
-              Шаг 2
-            </li>
-            <li
-              className={
-                styles["steps-item"] + " " + styles.done + " " + styles.active
-              }
-            >
-              <button className={styles["steps-item-button"]}>3</button>
-              Шаг 3
-            </li>
-            <li className={styles["steps-item"]}>
-              <button className={styles["steps-item-button"]}>4</button>
-              Шаг 4
-            </li>
+            {steps.map((step) => (
+              <li
+                key={step.id}
+                className={`${styles["steps-item"]} ${
+                  Number(activeIndex) >= Number(step.id) ? styles.done : ""
+                } ${activeIndex === step.id ? styles.active : ""}`}
+              >
+                <button
+                  onClick={() => setActiveIndex(step.id)}
+                  className={styles["steps-item-button"]}
+                >
+                  {Number(step.id)}
+                </button>
+                {step.title}
+              </li>
+            ))}
           </ul>
           <div className={styles["buttons-container"]}>
-            <button className={styles.button}>Назад</button>
-            <button className={styles.button}>
-              Далее
-              {/* "Начать сначала", можно сделать этой же кнопкой, просто подменять обработчик и текст в зависимости от условия */}
-              {/* Или заменять всю кнопку в зависимости от условия */}
+            <button onClick={back} className={styles.button}>
+              Назад
             </button>
+            {isLastStep ? (
+              <button onClick={startOver} className={styles.button}>
+                Начать сначала
+              </button>
+            ) : (
+              <button onClick={forward} className={styles.button}>
+                Далее
+              </button>
+            )}
           </div>
         </div>
       </div>
