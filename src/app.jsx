@@ -19,6 +19,9 @@ export const App = () => {
       setActiveIndex(previousIndex.toString().padStart(3, "0"));
     }
   };
+  const startOver = () => {
+    setActiveIndex("001");
+  };
 
   // И 2 переменных-флага — находимся ли мы на первом шаге, и находимся ли на последнем
   const isFirstStep = activeIndex === steps[0].id;
@@ -36,9 +39,9 @@ export const App = () => {
             {steps.map((step) => (
               <li
                 key={step.id}
-                className={`${styles["steps-item"]} ${styles.done} ${
-                  activeIndex === step.id ? styles.active : ""
-                }`}
+                className={`${styles["steps-item"]} ${
+                  Number(activeIndex) >= Number(step.id) ? styles.done : ""
+                } ${activeIndex === step.id ? styles.active : ""}`}
               >
                 <button
                   onClick={() => setActiveIndex(step.id)}
@@ -54,11 +57,15 @@ export const App = () => {
             <button onClick={back} className={styles.button}>
               Назад
             </button>
-            <button onClick={forward} className={styles.button}>
-              Далее
-              {/* "Начать сначала", можно сделать этой же кнопкой, просто подменять обработчик и текст в зависимости от условия */}
-              {/* Или заменять всю кнопку в зависимости от условия */}
-            </button>
+            {isLastStep ? (
+              <button onClick={startOver} className={styles.button}>
+                Начать сначала
+              </button>
+            ) : (
+              <button onClick={forward} className={styles.button}>
+                Далее
+              </button>
+            )}
           </div>
         </div>
       </div>
